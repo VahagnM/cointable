@@ -32,7 +32,9 @@
     <script src="/js/jquery.tablesorter.min.js"></script>
     <script>
         $(function() {
-            $( "#cripto_table" ).tablesorter();
+            $( "#cripto_table" ).tablesorter({
+                sortList : [[3, 1]]
+            });
         });
 
         function filterByName(input) {

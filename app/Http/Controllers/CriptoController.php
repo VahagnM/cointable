@@ -10,7 +10,7 @@ class CriptoController extends Controller
 {
     public function index()
     {
-        $list = CriptoMap::orderBy('percent_change_24h', 'desc')->get();
+        $list = CriptoMap::all();
 
         return view('coins.index', ['list' => $list]);
     }
