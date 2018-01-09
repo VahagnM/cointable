@@ -19,7 +19,10 @@ class CriptoController extends Controller
 
     public function coninMarketApiData()
     {
-        Artisan::call('coindata:start');
+        $info = CriptoMap::first();
+        if ($info->last_updated < (time() - 20)) {
+            Artisan::call('coindata:start');
+        }
         $list = CriptoMap::all();
 
         return view('coins.cripto_table', ['list' => $list]);

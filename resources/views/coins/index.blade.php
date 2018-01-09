@@ -18,7 +18,7 @@
     <script>
         $(function() {
             createSorter();
-            setInterval(coinApi, 10000);
+            setInterval(coinApi, {{config('settings.coinmarketcap_update_time')}} * 1000);
 
             $('#update_data').on('click', coinApi);
         });
