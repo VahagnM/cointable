@@ -12,3 +12,4 @@
 */
 
 Route::get('/', 'CriptoController@index');
+Route::get('/coin-api', 'CriptoController@coninMarketApiData');

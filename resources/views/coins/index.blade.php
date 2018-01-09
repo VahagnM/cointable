@@ -7,24 +7,9 @@
             </div>
         </div>
     </div>
-    <table id="cripto_table" class="table table-hover">
-        <thead>
-            <th>#</th>
-            <th>Name<span></span></th>
-            <th>Price<span></span></th>
-            <th>% Change(24h)<span></span></th>
-        </thead>
-        <tbody>
-            @foreach($list as $index => $item)
-                <tr>
-                    <td>{{$index + 1}}</td>
-                    <td>{{$item->name}}</td>
-                    <td>{{$item->price_usd}}</td>
-                    <td @if($item->percent_change_24h < 0) class="text-danger" @else class="text-success" @endif>{{$item->percent_change_24h}}</td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
+    <div id="coin_data">
+        @include('coins.cripto_table', ['list' => $list])
+    </div>
 
 @endsection
 
@@ -32,10 +17,20 @@
     <script src="/js/jquery.tablesorter.min.js"></script>
     <script>
         $(function() {
-            $( "#cripto_table" ).tablesorter({
-                sortList : [[3, 1]]
-            });
+            createSorter();
+            setInterval(coinApi, 10000);
+
+            $('#update_data').on('click', coinApi);
         });
+
+        function createSorter(sort)
+        {
+            sort = sort == undefined ? [[3, 1]] : sort;
+
+            $( "#cripto_table" ).tablesorter({
+                sortList : sort
+            });
+        }
 
         function filterByName(input) {
             // Declare variables
@@ -53,6 +48,34 @@
                         tr[i].style.display = "none";
                     }
                 }
+            }
+        }
+
+        function coinApi()
+        {
+            var xhr = new XMLHttpRequest(), btn = document.getElementById('update_data'), sort = [[3, 1]];
+
+            btn.disabled = 'disabled';
+            btn.innerText = 'Updateing...';
+            xhr.open('GET', '{{url('/coin-api')}}', false);
+            xhr.send();
+            if (xhr.status == 200) {
+                $( "#cripto_table" ).find('th').each(function(){
+                    if($(this).hasClass('headerSortUp')) {
+                        sort[0][0] = $(this).index();
+                        sort[0][1] = 1;
+                    } else if($(this).hasClass('headerSortDown')) {
+                        sort[0][0] = $(this).index();
+                        sort[0][1] = 0;
+                    }
+                })
+
+                document.getElementById('coin_data').innerHTML =  xhr.responseText;
+
+                createSorter(sort);
+
+                btn.removeAttribute('disabled');
+                btn.innerText = 'Update data';
             }
         }
     </script>

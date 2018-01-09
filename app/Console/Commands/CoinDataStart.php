@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\CriptoData;
 use App\CriptoMap;
+use App\Helpers\CoinMarketcapHelper;
 use Illuminate\Console\Command;
 
 class CoinDataStart extends Command
@@ -39,17 +40,7 @@ class CoinDataStart extends Command
      */
     public function handle()
     {
-        $ch = curl_init('https://api.coinmarketcap.com/v1/ticker/?limit=' . $this->option('limit'));
-        curl_setopt($ch, CURLOPT_NOBODY, 0); // remove body
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-        $response = curl_exec($ch);
-        $error = null;
-        if (curl_errno($ch)) {
-            $error = curl_error($ch);
-        }
-        curl_close($ch);
-
-        $data = json_decode($response, true);
+        $data = CoinMarketcapHelper::getCoinmarketData($this->option('limit'));
         $ids = [];
         foreach ($data as $coin) {
             \DB::table('criptodates')->insert($coin);
@@ -74,6 +65,5 @@ class CoinDataStart extends Command
             $map->last_updated = $coin['last_updated'];
             $map->save();
         }
-
     }
 }

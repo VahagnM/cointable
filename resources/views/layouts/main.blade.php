@@ -16,6 +16,7 @@
 <div class="container">
     <div class="page-header">
         <h1>Criptocurrencies</h1>
+        <button id="update_data" class="btn">Update data</button>
     </div>
     <section class="main">
         @yield('content')
